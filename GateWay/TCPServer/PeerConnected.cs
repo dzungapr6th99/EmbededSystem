@@ -33,7 +33,7 @@ namespace GateWay.TCPServer
             SendMessage.Clear();
 
         }
-        public void Start()
+        public void ReceiveData()
         {
             ReadData = new Thread(() => 
             {
@@ -44,24 +44,17 @@ namespace GateWay.TCPServer
                         ReceiveMessages.Enqueue(ReadData);
                 }
             });
-            Response = new Thread(()=>
-            {
-                while (true)
-                {
-                    if (SendMessage.Count != 0)
-                    {
-                        String Message = SendMessage.Dequeue();
-                        Writer.WriteLine(Message);
-
-                    }
-                    else
-                        Thread.Sleep(1000);
-                }    
-            });
+          
             ReadData.Start();
-            Response.Start();
-
+          
         }
-       
+       public void Send()
+        {
+            while (SendMessage.Count>0)
+            {
+                String Message = SendMessage.Dequeue();
+                Writer.Write(Message);
+            }
+        }
     }
 }

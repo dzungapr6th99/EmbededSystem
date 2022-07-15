@@ -9,7 +9,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
-            <RowDefinition Height="300"/>
+            <RowDefinition Height="250"/>
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
@@ -17,7 +17,7 @@
                 <MenuItem Header="System">
                     <MenuItem Header="Login"/>
                     <MenuItem Header="Logout"/>
-                    <MenuItem Header="Connect"/>
+                    <MenuItem Header="Connect" Click="ConnectToServer"/>
                 </MenuItem>
                 <MenuItem Header="Control">
                     <MenuItem Header="Light Bulb"/>
@@ -32,26 +32,40 @@
         <Grid Grid.Row="1">
             <TabControl>
                 <TabItem Header="Message gửi đi">
-                    
+                    <ListView x:Name="lsvSendMessage">
+                        <ListView.View>
+                            <GridView>
+                                
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
                 </TabItem>
                 <TabItem Header="Message nhận về">
-                    
+                    <ListView x:Name="lsvReceiveMessage">
+                        <ListView.View>
+                            <GridView>
+                                
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
                 </TabItem>
                 
             </TabControl>
         </Grid>
         <Grid Grid.Row="2">
 
-            <TextBox Height="50" Width="600"
+            <TextBox x:Name="tbSendMesage"
+                     Height="50" Width="600"
                      HorizontalAlignment="Left"
-                     VerticalAlignment="Center"
-                     Margin="50,0,0,0"/>
+                     VerticalAlignment="Top"
+                     Margin="50,20,0,0"/>
             <Button Content="Send"
                     Height="50" Width="100"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Margin="670,0,0,0"/>
-            
+                    VerticalAlignment="Top"
+                    Margin="670,20,0,0"
+                    Click="btnClickSend"/>
+            <Label Name="lbIpConnect"/>
         </Grid>
     </Grid>
 </Window>

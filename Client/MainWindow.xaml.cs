@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using Client.TCPClient;
 namespace Client
 {
     /// <summary>
@@ -20,11 +20,35 @@ namespace Client
     /// </summary>
     public partial class MainWindow : Window
     {
+        IoTClient _IoTClient = new IoTClient();
         public MainWindow()
         {
             InitializeComponent();
+            
+            
         }
 
-        
+        private void btnClickSend(object sender, RoutedEventArgs e)
+        {
+            if (String.IsNullOrEmpty(tbSendMesage.Text))
+                MessageBox.Show("Chưa nhập Message gửi");
+            else
+            {
+                String Message = tbSendMesage.Text;
+                _IoTClient.PushMessage(Message);
+                tbSendMesage.Text = "";
+            }    
+                
+
+        }
+        private void ConnectToServer(object sender, RoutedEventArgs e)
+        {
+            _IoTClient.Connect("127.0.0.1", 9000); //Tên miền IP, Port 
+            if (_IoTClient.IsConnected)
+            {
+                lbIpConnect.Content = _IoTClient.IPConnect;
+                lbIpConnect.Background = Brushes.Green;
+            }    
+        }
     }
 }
