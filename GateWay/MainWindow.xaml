@@ -54,6 +54,15 @@
                         </ListView.View>
                     </ListView>
                 </TabItem>
+                <TabItem Header="PeerConnected" MouseEnter="lsvPeerConnectedClick">
+                    <ListView Name="lsvPeerConnected">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="PeerConnected" DisplayMemberBinding="{Binding Address}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </TabItem>
             </TabControl>
         </Grid>
 

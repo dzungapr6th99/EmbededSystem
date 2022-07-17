@@ -13,35 +13,66 @@ namespace GateWay.TCPServer
         public Queue<String> ReceiveMessages = new Queue<string>();
         public Queue<String> SendMessage = new Queue<string>();
         NetworkStream _NetworkStream;
+        IPAddress remoteIP;
+        int port;
         StreamReader Reader;
         StreamWriter Writer;
         Thread ReadData;
-        Thread Response;
+ 
         public PeerConnected(Socket _socket)
         {
             AcceptedSocket = _socket;
             _NetworkStream = new NetworkStream(AcceptedSocket);
             Reader = new StreamReader(_NetworkStream);
             Writer = new StreamWriter(_NetworkStream);
-            
+            IPEndPoint ipend = (IPEndPoint)AcceptedSocket.RemoteEndPoint;
+            remoteIP = ipend.Address;
+            port = ipend.Port;
         }
         ~PeerConnected()
         {
             ReadData.Abort();
-            Response.Abort();
             ReceiveMessages.Clear();
             SendMessage.Clear();
 
+        }
+        public IPAddress RemoteIP
+        {
+            get 
+            {
+                return remoteIP;
+            }
+        }
+        public int Port
+        {
+            get
+            {
+                return port;
+            }
+        }
+        public String AddressEndPoint
+        {
+            get
+            {
+                return RemoteIP.ToString() + ":" + Port.ToString();
+            }
         }
         public void ReceiveData()
         {
             ReadData = new Thread(() => 
             {
-                while (true)
+                try
                 {
-                    String ReadData = Reader.ReadLine();
-                    if (!String.IsNullOrEmpty(ReadData))
-                        ReceiveMessages.Enqueue(ReadData);
+                    while (true)
+                    {
+                        String ReadData = Reader.ReadLine();
+                        if (!String.IsNullOrEmpty(ReadData))
+                            ReceiveMessages.Enqueue(ReadData);
+                    }
+                }
+                catch
+                {
+
                 }
             });
           
