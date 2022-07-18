@@ -1,0 +1,16 @@
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\bin\Debug\net5.0\TCPSever.exe
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\bin\Debug\net5.0\TCPSever.deps.json
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\bin\Debug\net5.0\TCPSever.runtimeconfig.json
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\bin\Debug\net5.0\TCPSever.runtimeconfig.dev.json
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\bin\Debug\net5.0\TCPSever.dll
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\bin\Debug\net5.0\ref\TCPSever.dll
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\bin\Debug\net5.0\TCPSever.pdb
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\obj\Debug\net5.0\TCPSever.csproj.AssemblyReference.cache
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\obj\Debug\net5.0\TCPSever.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\obj\Debug\net5.0\TCPSever.AssemblyInfoInputs.cache
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\obj\Debug\net5.0\TCPSever.AssemblyInfo.cs
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\obj\Debug\net5.0\TCPSever.csproj.CoreCompileInputs.cache
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\obj\Debug\net5.0\TCPSever.dll
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\obj\Debug\net5.0\ref\TCPSever.dll
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\obj\Debug\net5.0\TCPSever.pdb
+C:\Users\admin\source\repos\NAVI\TCPSever\TCPSever\obj\Debug\net5.0\TCPSever.genruntimeconfig.cache
