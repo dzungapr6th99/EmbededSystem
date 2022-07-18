@@ -65,7 +65,9 @@
                     VerticalAlignment="Top"
                     Margin="670,20,0,0"
                     Click="btnClickSend"/>
-            <Label Name="lbIpConnect"/>
+            <Label Name="lbIpConnect" Height="25" 
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"/>
         </Grid>
     </Grid>
 </Window>
