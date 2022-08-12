@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Net;
 using System.IO;
-using System.Threading;
 using System.Net.Sockets;
+using System.Text;
+using System.Threading;
 namespace Client.TCPClient
 {
     class IoTClient
     {
         TcpClient Client = new TcpClient();
         Stream stream;
+        StreamWriter Writer;
+        static Encoding encoding = new ASCIIEncoding();
         Queue<String> SendMessage = new Queue<string>();
         Thread Communicate;
         public bool IsConnected = false;
@@ -18,8 +19,7 @@ namespace Client.TCPClient
         static ASCIIEncoding Encode = new ASCIIEncoding();
         public IoTClient() { }
         public void Connect(String Ip, int PortNumber)
-        {
-            
+        {          
             while (!Client.Connected)
             {
                 try
@@ -34,25 +34,16 @@ namespace Client.TCPClient
                 }
             }    
             stream = Client.GetStream();
-            Communicate = new Thread(() =>
-            {
-                while (true)
-                {
-                    if (SendMessage.Count > 0)
-                    {
-                        String Message = SendMessage.Dequeue();
-                        byte[] data = Encode.GetBytes(Message);
-                        stream.Write(data, 0, data.Length);
-                    }
-                    else
-                        Thread.Sleep(1000);
-                }    
-            });
-            Communicate.Start();
+         
         }
         public void PushMessage(String Message)
         {
             SendMessage.Enqueue(Message);
+            //byte[] data = encoding.GetBytes(Message);
+            //stream.Write(data, 0, data.Length);
+            var SendBuffer = Encoding.UTF8.GetBytes(Message);
+            stream.Write(SendBuffer, 0, SendBuffer.Length);
+            stream.Flush();
         }
          
     }

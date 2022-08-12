@@ -22,38 +22,80 @@ namespace GateWay
     {
 
         Server c_TCPServer;
+        Dictionary<String, PeerConnected> PeerConnectedList = new Dictionary<string, PeerConnected>();
+        List<DisplayPeerConnected> ListClientAddress = new List<DisplayPeerConnected>();
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += LoadMainWindow;
+            Closed += CloseMainWindow;
+           
+        }
+
+        public void LoadMainWindow(object sender, EventArgs e)
+        {
             String Address = "127.0.0.1";
             int Port = 9000;
             c_TCPServer = new Server(Address, Port);
+            c_TCPServer.NewConnected += TcpServerNewConnected;
+            c_TCPServer.OnReceiverMessage += TcpServerReceiveMessage;
+            c_TCPServer.PeerDisconnect += TcpServerDisconnect;
+            /*DisplayPeerConnected peerItem = new DisplayPeerConnected()
+            {
+                Address = "192.168.1.1",
+                Time = DateTime.Now.ToString()
+            };
+            lsvPeerConnected.Items.Add(peerItem);*/
+        }
+
+        public void CloseMainWindow(object sender, EventArgs e)
+        {
+            Environment.Exit(Environment.ExitCode);
         }
 
         private void Click_btnStartServer(object sender, RoutedEventArgs e)
         {
             c_TCPServer.Start();
-
+            btnStartServer.Content = "Server Started";
+            btnStartServer.Foreground = Brushes.Green;
         }
-        private void lsvPeerConnectedClick(object sender, RoutedEventArgs e)
+
+
+        private void TcpServerNewConnected(object sender,PeerConnectedEventArgs e)
         {
-            List<DisplayPeerConnected> ListPeerConnected = new List<DisplayPeerConnected>();
-            foreach (PeerConnected peerConnected in c_TCPServer.ListPeerConnected.Values)
+            String _key = e.peerConnected.AddressEndPoint;
+            PeerConnectedList.Add(_key, e.peerConnected);
+            ReloadPeerConnectedList();
+        }
+
+        
+        private void TcpServerReceiveMessage(object sender, PeerConnectedMsgEventArgs e)
+        {
+            DisplayData DisplayMessageItem = new DisplayData
             {
-                DisplayPeerConnected display = new DisplayPeerConnected
-                {
-                    Address = peerConnected.AddressEndPoint
-                };
-                ListPeerConnected.Add(display);
-            
-            }
-            lsvPeerConnected.ItemsSource = ListPeerConnected;
-            lsvPeerConnected.Items.Refresh();
+                Client = e.PeerConnected.AddressEndPoint + ":" + e.PeerConnected.Port,
+                MessageRaw = e.PeerConnected.ReadMessage(),
+                Time = DateTime.Now.ToString("HH:MM:ss")
+            };
+            lsvReceiveMessage.Items.Add(DisplayMessageItem);
         }
-        class  DisplayPeerConnected
+        private void TcpServerDisconnect(object sender, PeerConnectedEventArgs e)
         {
-            public String Address;
 
+        }
+       private void ReloadPeerConnectedList()
+        {
+            foreach (KeyValuePair<String, PeerConnected> entry in PeerConnectedList )
+            {
+                DisplayPeerConnected PeerConnectedItem = new DisplayPeerConnected()
+                {
+                    Time = DateTime.Now.ToString(),
+                    Address = entry.Key
+                };
+                lsvPeerConnected.Items.Add(PeerConnectedItem);
+                int j = PeerConnectedList.Count();
+            }
+            
         }
     }
 }

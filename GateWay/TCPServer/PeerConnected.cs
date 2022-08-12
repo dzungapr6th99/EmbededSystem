@@ -12,13 +12,17 @@ namespace GateWay.TCPServer
         private Socket AcceptedSocket;
         public Queue<String> ReceiveMessages = new Queue<string>();
         public Queue<String> SendMessage = new Queue<string>();
+        public event PeerConnectedEventHandler PeerDisconnected;
         NetworkStream _NetworkStream;
         IPAddress remoteIP;
         int port;
         StreamReader Reader;
         StreamWriter Writer;
         Thread ReadData;
- 
+        public PeerConnected()
+        {
+
+        }
         public PeerConnected(Socket _socket)
         {
             AcceptedSocket = _socket;
@@ -31,9 +35,6 @@ namespace GateWay.TCPServer
         }
         ~PeerConnected()
         {
-            ReadData.Abort();
-            ReceiveMessages.Clear();
-            SendMessage.Clear();
 
         }
         public IPAddress RemoteIP
@@ -57,27 +58,20 @@ namespace GateWay.TCPServer
                 return RemoteIP.ToString() + ":" + Port.ToString();
             }
         }
-        public void ReceiveData()
+        public bool IsActive
         {
-            ReadData = new Thread(() => 
+            get
             {
-                try
-                {
-                    while (true)
-                    {
-                        String ReadData = Reader.ReadLine();
-                        if (!String.IsNullOrEmpty(ReadData))
-                            ReceiveMessages.Enqueue(ReadData);
-                    }
-                }
-                catch
-                {
-
-                }
-            });
+                return AcceptedSocket.Connected;
+            }
+        }
+        public String ReadMessage()
+        {
           
-            ReadData.Start();
-          
+           String ReadData = Reader.ReadLine();
+           if (!String.IsNullOrEmpty(ReadData))
+               ReceiveMessages.Enqueue(ReadData);        
+          return ReadData;
         }
        public void Send()
         {

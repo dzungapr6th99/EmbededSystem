@@ -24,7 +24,8 @@ namespace Client
         public MainWindow()
         {
             InitializeComponent();
-            
+            Loaded += MainWindowLoaded;
+            Closed += MainWindowClosed;
             
         }
 
@@ -49,6 +50,14 @@ namespace Client
                 lbIpConnect.Content = _IoTClient.IPConnect;
                 lbIpConnect.Background = Brushes.Green;
             }    
+        }
+        private void MainWindowLoaded(object sender, EventArgs e)
+        {
+
+        }
+        private void MainWindowClosed(object sender, EventArgs e)
+        {
+            Environment.Exit(Environment.ExitCode);
         }
     }
 }

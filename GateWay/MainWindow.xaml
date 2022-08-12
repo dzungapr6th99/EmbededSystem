@@ -54,11 +54,13 @@
                         </ListView.View>
                     </ListView>
                 </TabItem>
-                <TabItem Header="PeerConnected" MouseEnter="lsvPeerConnectedClick">
+                <TabItem Header="PeerConnected">
                     <ListView Name="lsvPeerConnected">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="PeerConnected" DisplayMemberBinding="{Binding Address}"/>
+                                <GridViewColumn Header="Time" Width="150" DisplayMemberBinding="{Binding Path=Time}"/>
+                                <GridViewColumn Header="Client" Width="650" DisplayMemberBinding="{Binding Path = Address}"/>
+                                
                             </GridView>
                         </ListView.View>
                     </ListView>

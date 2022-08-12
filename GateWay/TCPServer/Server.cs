@@ -12,11 +12,13 @@ namespace GateWay.TCPServer
         int Port;
         String Address;
         public bool IsActive = false;
-        public Dictionary<String, PeerConnected> ListPeerConnected = new Dictionary<string, PeerConnected>();
+        public event PeerConnectedEventHandler NewConnected;
+        public event PeerConnectedMsgEventHandler OnReceiverMessage;
+        public event PeerConnectedEventHandler PeerDisconnect;
         Thread ListenThread;
         Thread ReceiveData;
-        Thread Response;
-        public Server(String address, int PortNumber) 
+
+        public Server(String address, int PortNumber)
         {
             Address = address;
             Port = PortNumber;
@@ -25,16 +27,14 @@ namespace GateWay.TCPServer
         { }
         public void Start()
         {
+          
             try
             {
-                Listener = new TcpListener(IPAddress.Any, Port);
+                Listener = new TcpListener(IPAddress.Parse(Address), Port);
                 IsActive = true;
                 ListenThread = new Thread(ExecuteListenThread);
-                ReceiveData = new Thread(ExecuteReceiveDataThread);
-                Response = new Thread(ExecuteResponseThread);
                 ListenThread.Start();
-                ReceiveData.Start();
-                Response.Start();
+               
             }
             catch
             {
@@ -43,77 +43,59 @@ namespace GateWay.TCPServer
         }
         private void ExecuteListenThread()
         {
-            while (IsActive==true)
+            while (IsActive == true)
             {
                 try
                 {
                     Listener.Start();
-                    
-                    PeerConnected peerConnected = new PeerConnected(Listener.AcceptSocket());
-                    if (!ListPeerConnected.ContainsKey(peerConnected.AddressEndPoint))
-                    {
-                        ListPeerConnected.Add(peerConnected.AddressEndPoint, peerConnected);
-                    } 
-                        
-                }
-                catch
-                {
 
+                    Socket _Socket = Listener.AcceptSocket();
+
+                    PeerConnected peerConnected = new PeerConnected(_Socket);
+
+                    Listener.Stop();
+
+                    peerConnected.PeerDisconnected += PeerConnected_DisConnect;
+                    if (NewConnected != null) NewConnected(this, new PeerConnectedEventArgs(peerConnected));
+                    ReceiveData = new Thread(ReadDataFromSocket);
+                    ReceiveData.IsBackground = true;
+                    ReceiveData.Start();
                 }
-            }    
+                catch (Exception ex)
+                {
+                    Thread.Sleep(1000);
+                }
+            }
         }
-        private void ExecuteReceiveDataThread()
+        private void PeerConnected_DisConnect(object sender, PeerConnectedEventArgs e)
         {
-            while (IsActive)
+            if (PeerDisconnect != null)
             {
-                try
-                {
-                    if (ListPeerConnected.Count>0)
-                    {
-                        foreach (PeerConnected peerConnected in ListPeerConnected.Values)
-                        {
-                            peerConnected.ReceiveData();
-                        }    
-                    }    
-                }
-                catch
-                {
-
-                }
-            }    
-        }
-        private void ExecuteResponseThread()
+                PeerDisconnect(this, new PeerConnectedEventArgs(e.peerConnected));
+            } 
+                
+        }    
+        private void ReadDataFromSocket(object m_PeerConnected)
         {
-            while (IsActive)
-            {
-                try
-                {
-                    if (ListPeerConnected.Count > 0)
-                    {
-                        foreach (PeerConnected peerConnected in ListPeerConnected.Values)
-                        {
-                            peerConnected.Send();
-                        }
-                    }
-                }
-                catch
-                {
-
-                } 
-                 
-            }    
-        }
-
-        private void GetData()
-        {
+            PeerConnected peerConnected = (PeerConnected)m_PeerConnected;
             try
             {
-                
+                while (peerConnected.IsActive)
+                {
+                    string MessageRecive = peerConnected.ReadMessage();
+                    //khởi tạo event nhận được message
+                    if (OnReceiverMessage!=null) 
+                    {
+                        OnReceiverMessage(this, new PeerConnectedMsgEventArgs(peerConnected, MessageRecive));
+                    }    
+                }
             }
-            catch
+            catch (Exception ex)
             {
-
+                throw;
             }
+             
         }
+
     }
 }

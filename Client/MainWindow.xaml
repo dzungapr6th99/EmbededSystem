@@ -35,7 +35,9 @@
                     <ListView x:Name="lsvSendMessage">
                         <ListView.View>
                             <GridView>
-                                
+                                <GridViewColumn Header="Client" Width="100" DisplayMemberBinding="{Binding Path= Client }"/>
+                                <GridViewColumn Header="Time" Width="100" DisplayMemberBinding="{Binding Path= Time}"/>
+                                <GridViewColumn Header="MessageRaw" Width="600" DisplayMemberBinding="{Binding Path= MessageRaw}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -44,30 +46,29 @@
                     <ListView x:Name="lsvReceiveMessage">
                         <ListView.View>
                             <GridView>
-                                
+                                <GridViewColumn Header="Client" Width="100" DisplayMemberBinding="{Binding Path= Client }"/>
+                                <GridViewColumn Header="Time" Width="100" DisplayMemberBinding="{Binding Path= Time}"/>
+                                <GridViewColumn Header="MessageRaw" Width="600" DisplayMemberBinding="{Binding Path= MessageRaw}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
                 </TabItem>
-                
+                <TabItem Header="Client Connected List">
+                    <ListView x:Name="lsvPeerConnected">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Client" Width="100" DisplayMemberBinding="{Binding Path=Client}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </TabItem>
             </TabControl>
         </Grid>
         <Grid Grid.Row="2">
 
-            <TextBox x:Name="tbSendMesage"
-                     Height="50" Width="600"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Top"
-                     Margin="50,20,0,0"/>
-            <Button Content="Send"
-                    Height="50" Width="100"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Margin="670,20,0,0"
-                    Click="btnClickSend"/>
-            <Label Name="lbIpConnect" Height="25" 
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Bottom"/>
+            <TextBox x:Name="tbSendMesage" Height="50" Width="600" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50,20,0,0"/>
+            <Button Content="Send" Height="50" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="670,20,0,0" Click="btnClickSend"/>
+            <Label Name="lbIpConnect" Height="25" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
         </Grid>
     </Grid>
 </Window>
