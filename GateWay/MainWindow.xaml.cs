@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using GateWay.TCPServer;
+//using IoTMessage;
 namespace GateWay
 {
     /// <summary>
@@ -40,12 +41,7 @@ namespace GateWay
             c_TCPServer.NewConnected += TcpServerNewConnected;
             c_TCPServer.OnReceiverMessage += TcpServerReceiveMessage;
             c_TCPServer.PeerDisconnect += TcpServerDisconnect;
-            /*DisplayPeerConnected peerItem = new DisplayPeerConnected()
-            {
-                Address = "192.168.1.1",
-                Time = DateTime.Now.ToString()
-            };
-            lsvPeerConnected.Items.Add(peerItem);*/
+            
         }
 
         public void CloseMainWindow(object sender, EventArgs e)
@@ -68,32 +64,74 @@ namespace GateWay
             ReloadPeerConnectedList();
         }
 
-        
         private void TcpServerReceiveMessage(object sender, PeerConnectedMsgEventArgs e)
         {
-            DisplayData DisplayMessageItem = new DisplayData
+            String _key = e.PeerConnected.AddressEndPoint+":"+e.PeerConnected.Port.ToString();
+            ShowNewMessage(_key, e.Msg);
+        }
+        private delegate void ShowNewMessageReceive(string peerkey, string Message);
+        private void ShowNewMessage(String peerkey, String Message)
+        {
+            try
             {
-                Client = e.PeerConnected.AddressEndPoint + ":" + e.PeerConnected.Port,
-                MessageRaw = e.PeerConnected.ReadMessage(),
-                Time = DateTime.Now.ToString("HH:MM:ss")
-            };
-            lsvReceiveMessage.Items.Add(DisplayMessageItem);
+                if (!lsvReceiveMessage.Dispatcher.CheckAccess())
+                {
+                    lsvReceiveMessage.Dispatcher.Invoke(new ShowNewMessageReceive(ShowNewMessage), peerkey, Message);
+                }
+                else
+                {
+                    DisplayData DisplayMessageItem = new DisplayData
+                    {
+                        Client = peerkey,
+                        MessageRaw = Message,
+                        Time = DateTime.Now.ToString("HH:MM:ss"),
+                        SeqNum = "0"
+                    };
+                    lsvReceiveMessage.Items.Add(DisplayMessageItem);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            
         }
         private void TcpServerDisconnect(object sender, PeerConnectedEventArgs e)
         {
 
         }
-       private void ReloadPeerConnectedList()
+        private delegate void NewConnectDelegate();
+        private void ReloadPeerConnectedList()
         {
-            foreach (KeyValuePair<String, PeerConnected> entry in PeerConnectedList )
+            try
             {
-                DisplayPeerConnected PeerConnectedItem = new DisplayPeerConnected()
+                if (!lsvPeerConnected.Dispatcher.CheckAccess())
                 {
-                    Time = DateTime.Now.ToString(),
-                    Address = entry.Key
-                };
-                lsvPeerConnected.Items.Add(PeerConnectedItem);
-                int j = PeerConnectedList.Count();
+                    lsvPeerConnected.Dispatcher.Invoke(new NewConnectDelegate(ReloadPeerConnectedList));
+
+                }   
+                else
+                    try
+                    {
+                        
+                        foreach (KeyValuePair<String, PeerConnected> entry in PeerConnectedList)
+                        {
+                            DisplayPeerConnected PeerConnectedItem = new DisplayPeerConnected()
+                            {
+                                Time = DateTime.Now.ToString(),
+                                Address = entry.Key
+                            };
+                            lsvPeerConnected.Items.Add(PeerConnectedItem);
+                        }
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+            }
+            catch
+            {
+                throw;
             }
             
         }

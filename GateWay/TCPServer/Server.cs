@@ -15,8 +15,8 @@ namespace GateWay.TCPServer
         public event PeerConnectedEventHandler NewConnected;
         public event PeerConnectedMsgEventHandler OnReceiverMessage;
         public event PeerConnectedEventHandler PeerDisconnect;
+        private object LockRecovery= new object();
         Thread ListenThread;
-        Thread ReceiveData;
 
         public Server(String address, int PortNumber)
         {
@@ -30,15 +30,20 @@ namespace GateWay.TCPServer
           
             try
             {
-                Listener = new TcpListener(IPAddress.Parse(Address), Port);
-                IsActive = true;
-                ListenThread = new Thread(ExecuteListenThread);
-                ListenThread.Start();
+                if (IsActive==false)
+                {
+                    Listener = new TcpListener(IPAddress.Parse(Address), Port);
+                    IsActive = true;
+                    ListenThread = new Thread(ExecuteListenThread);
+                    ListenThread.IsBackground = true;
+                    ListenThread.Start();
+                }
+                
                
             }
             catch
             {
-
+                IsActive = false;
             }
         }
         private void ExecuteListenThread()
@@ -47,6 +52,7 @@ namespace GateWay.TCPServer
             {
                 try
                 {
+                    lock (LockRecovery) {  }
                     Listener.Start();
 
                     Socket _Socket = Listener.AcceptSocket();
@@ -56,13 +62,15 @@ namespace GateWay.TCPServer
                     Listener.Stop();
 
                     peerConnected.PeerDisconnected += PeerConnected_DisConnect;
-                    if (NewConnected != null) NewConnected(this, new PeerConnectedEventArgs(peerConnected));
-                    ReceiveData = new Thread(ReadDataFromSocket);
+                    if (NewConnected != null) 
+                        NewConnected(this, new PeerConnectedEventArgs(peerConnected));
+                    Thread ReceiveData = new Thread(ReadDataFromSocket);
                     ReceiveData.IsBackground = true;
-                    ReceiveData.Start();
+                    ReceiveData.Start(peerConnected);
                 }
                 catch (Exception ex)
                 {
+                    
                     Thread.Sleep(1000);
                 }
             }
@@ -84,7 +92,7 @@ namespace GateWay.TCPServer
                 {
                     string MessageRecive = peerConnected.ReadMessage();
                     //khởi tạo event nhận được message
-                    if (OnReceiverMessage!=null) 
+                    if ((OnReceiverMessage!=null) && (MessageRecive!="")) 
                     {
                         OnReceiverMessage(this, new PeerConnectedMsgEventArgs(peerConnected, MessageRecive));
                     }    
@@ -92,6 +100,7 @@ namespace GateWay.TCPServer
             }
             catch (Exception ex)
             {
+
                 throw;
             }
              

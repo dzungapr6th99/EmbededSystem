@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using IoTMessage;
+using Client.View;
 using Client.TCPClient;
 namespace Client
 {
@@ -20,6 +22,7 @@ namespace Client
     /// </summary>
     public partial class MainWindow : Window
     {
+        
         IoTClient _IoTClient = new IoTClient();
         public MainWindow()
         {
@@ -32,10 +35,13 @@ namespace Client
         private void btnClickSend(object sender, RoutedEventArgs e)
         {
             if (String.IsNullOrEmpty(tbSendMesage.Text))
+            {
+                
                 MessageBox.Show("Chưa nhập Message gửi");
+            }
             else
             {
-                String Message = tbSendMesage.Text;
+                String Message = "IOT=Begin" + tbSendMesage.Text + "IOT=End";
                 _IoTClient.PushMessage(Message);
                 tbSendMesage.Text = "";
             }    
@@ -53,11 +59,28 @@ namespace Client
         }
         private void MainWindowLoaded(object sender, EventArgs e)
         {
-
+            
         }
         private void MainWindowClosed(object sender, EventArgs e)
         {
             Environment.Exit(Environment.ExitCode);
+        }
+        private void LoginClick(object sender, EventArgs e)
+        {
+            LoginForm frm = new LoginForm();
+            frm.ShowDialog();
+            if (frm.Username!="" && frm.Password!="")
+            {
+                IoTMessageBase Message = new IoTMessageBase();
+                Message.Account = frm.Username;
+                Message.Password = frm.Password;
+                Message.MessageType = MessageType.Login;
+                tbSendMesage.Text = Message.Build();
+            }    
+        }
+        private void LogOutClick(object sender, EventArgs e)
+        {
+
         }
     }
 }

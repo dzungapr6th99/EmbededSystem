@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IOTMessage;
-namespace IOTMessage
+namespace IoTMessage
 {
     class IoTFanControllerMessage : IoTMessageBase
     {
@@ -22,7 +22,10 @@ namespace IOTMessage
                 _FanLevel = value;
             }
         }
-
+        public IoTFanControllerMessage()
+        {
+            //MessageType = 1;
+        }
         
     }
 }

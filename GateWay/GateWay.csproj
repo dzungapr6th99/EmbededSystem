@@ -10,4 +10,8 @@
     <Folder Include="Lib\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IoTMessage\IoTMessage.csproj" />
+  </ItemGroup>
+
 </Project>

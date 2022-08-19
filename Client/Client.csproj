@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="View\" />
+    <ProjectReference Include="..\IoTMessage\IoTMessage.csproj" />
   </ItemGroup>
 
 </Project>

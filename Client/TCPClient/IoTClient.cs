@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+
 namespace Client.TCPClient
 {
     class IoTClient
@@ -38,10 +39,11 @@ namespace Client.TCPClient
         }
         public void PushMessage(String Message)
         {
+            
             SendMessage.Enqueue(Message);
             //byte[] data = encoding.GetBytes(Message);
             //stream.Write(data, 0, data.Length);
-            var SendBuffer = Encoding.UTF8.GetBytes(Message);
+            var SendBuffer = Encoding.ASCII.GetBytes(Message);
             stream.Write(SendBuffer, 0, SendBuffer.Length);
             stream.Flush();
         }
