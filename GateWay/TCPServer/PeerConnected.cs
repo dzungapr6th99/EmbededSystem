@@ -12,8 +12,10 @@ namespace GateWay.TCPServer
     class PeerConnected
     {
         private Socket AcceptedSocket;
-        public Queue<String> ReceiveMessages = new Queue<string>();
-        public Queue<String> SendMessage = new Queue<string>();
+        public Queue<IoTMessageBase> ReceiveMessages = new Queue<IoTMessageBase>();
+        public Queue<IoTMessageBase> SendMessage = new Queue<IoTMessageBase>();
+        public String TargetID;
+        public String AlreadySendedMessage="";
         String BeginString = "IOT=Begin";
         String EndString = "IOT=End";
         public event PeerConnectedEventHandler PeerDisconnected;
@@ -21,6 +23,7 @@ namespace GateWay.TCPServer
         IPAddress remoteIP;
         StringBuilder IncommingMessage= new StringBuilder();
         int port;
+        int SeqNum = 0;
         int Buffer = 200;
         byte[] ReadingBuffer;
         
@@ -90,7 +93,8 @@ namespace GateWay.TCPServer
                 String ReceiveMessage = ProcessIncomminMessage();
                 if (ReceiveMessage.Length > 0)
                 {
-                    ReceiveMessages.Enqueue(ReceiveMessage);
+                    IoTMessageBase IoTReveive = new IoTMessageBase(ReceiveMessage);
+                    ReceiveMessages.Enqueue(IoTReveive);
                     return ReceiveMessage;
                 }
                 else
@@ -135,18 +139,32 @@ namespace GateWay.TCPServer
         {
             try
             {
-                while (SendMessage.Count > 0)
+                IoTMessageBase Message = new IoTMessageBase();
+                if (SendMessage.Count>0)
                 {
-                    String Message = SendMessage.Dequeue();
-                    byte[] BuffContent = Encoding.ASCII.GetBytes(Message);
+                    Message = SendMessage.Dequeue();
+                    Message.SeqNum = GetSeqNum();
+                    AlreadySendedMessage = Message.Build();
+                    byte[] BuffContent = Encoding.ASCII.GetBytes(AlreadySendedMessage);
                     AcceptedSocket.Send(BuffContent, 0, BuffContent.Length, SocketFlags.None, out SocketError socketError);
-
                 }
+                
             }
             catch
             {
-
+                
+                throw;
             }
+        }
+        public void ShutDown()
+        {
+            AcceptedSocket.Close();
+            
+        }
+        private int GetSeqNum()
+        {
+            SeqNum++;
+            return SeqNum - 1;
         }
     }
 }

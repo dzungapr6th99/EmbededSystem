@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IoTMessage
 {
-    public class MessageType
+    public static class MessageType
     {
         public static int Login = 1;
         public static int Logout = 2;

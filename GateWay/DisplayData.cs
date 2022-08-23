@@ -9,8 +9,13 @@ namespace GateWay
         public String Time { get; set; }
         public String Client { get; set; }
         public String SeqNum { get; set; }
+        public String MessageType { get; set; }
         public String MessageRaw { get; set; }
         public DisplayData() { }
+    }
+    class DisplaySendMessage
+    {
+
     }
     class DisplayPeerConnected
     {

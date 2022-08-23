@@ -77,6 +77,14 @@ namespace IoTMessage
         /// </summary>
         protected String _Password = "";
         /// <summary>
+        /// ID bên nhận, Tag=14
+        /// </summary>
+        protected String _TargetID = "";
+        /// <summary>
+        /// ID bên gửi, Tag=15
+        /// </summary>
+        protected String _SenderID = "";
+        /// <summary>
         /// Xác định loại Message
         /// Tag = 1
         /// 1= Login 2=Logout 3= Control  4=Response
@@ -137,6 +145,20 @@ namespace IoTMessage
             }
         }    
         /// <summary>
+        /// Xác định trạng thái bật tắt của thiết bị
+        /// </summary>
+        public int OnOff
+        {
+            get
+            {
+                return _OnOff;
+            }
+            set
+            {
+                _OnOff = value;
+            }
+        }    
+        /// <summary>
         /// Xác định nhà thông minh được ra lệnh
         /// </summary>
         public String HomeID
@@ -150,7 +172,9 @@ namespace IoTMessage
                 _HomeID = value;
             }
         }
-
+        /// <summary>
+        /// Xác định loại thiết bị
+        /// </summary>
         public int DeviceType
         {
             get
@@ -162,10 +186,40 @@ namespace IoTMessage
                 _DeviceType = value;
             }
         }
+        /// <summary>
+        /// Định danh bên nhận
+        /// Tag=14
+        /// </summary>
+        public String TargetID
+        {
+            get
+            {
+                return _TargetID;
+            }
+            set
+            {
+                _SenderID=value;
+            }
+        }
+        /// <summary>
+        /// ID bên gửi, Tag=15
+        /// </summary>
+        public String SenderID
+        {
+            get
+            {
+                return _SenderID;
+            }
+            set
+            {
+                _SenderID = value;
+            }
+        }
         public String Build()
         {
             //Degree-Fanlevel-DeviceID-Gapfill-BeginSeqNo-EndSendNo
-            MessageRaw += IOTBegin;
+            MessageRaw = "";
+            MessageRaw += IOTBegin+"&";
             if (_MessageType != -1) MessageRaw += "1=" + _MessageType.ToString() + "&";
             if (_SeqNum != -1) MessageRaw += "2=" + _SeqNum.ToString() + "&";
             if (_Account != "") MessageRaw += "3=" + _Account + "&";
@@ -179,13 +233,15 @@ namespace IoTMessage
             if (_BeginSendNo != -1) MessageRaw += "11=" + _BeginSendNo.ToString() + "&";
             if (_EndSendNo != -1) MessageRaw += "12=" + _EndSendNo.ToString() + "&";
             if (_Password != "") MessageRaw += "13=" + _Password + "&";
-
+            if (_TargetID != "") MessageRaw += "14=" + _TargetID+"&";
+            if (_SenderID != "") MessageRaw += "15=" + _SenderID +"&";
             MessageRaw += IOTEnd;
             return MessageRaw;
         }
         public IoTMessageBase() { }
         public IoTMessageBase(String a)
         {
+            MessageRaw = a;
             if (a.IndexOf(IOTBegin)>=0)
             {
                 String[] a1 = a.Split('&');
@@ -232,6 +288,12 @@ namespace IoTMessage
                             break;
                         case "13":
                             _Password = a2[a2.Length - 1];
+                            break;
+                        case "14":
+                            _TargetID = a2[a2.Length - 1];
+                            break;
+                        case "15":
+                            _SenderID = a2[a2.Length - 1];
                             break;
                     }
                 }    
